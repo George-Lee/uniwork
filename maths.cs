@@ -6,7 +6,8 @@ class Maths
 	{
 	    Console.WriteLine("Enter shit: ");
 	    string test = Console.ReadLine();
-	    Console.WriteLine("You entered ", test, " what number do you want to say?");
+	    Console.WriteLine("You entered ", test);
+	    Console.WriteLine(" what number do you want to say?");
 	    test = Console.ReadLine();
 	    Console.WriteLine(int.Parse(test));
 	    Console.WriteLine("4 * 5 = " + 4*5);
