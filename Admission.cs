@@ -5,7 +5,7 @@ class Admission
     static void Main()
     {
         Console.WriteLine("Enter your age in years (as an integer)?");
-        string age = Console.Readline();
+        string age = Console.ReadLine();
         
         int ageInt = int.Parse(age);
         
