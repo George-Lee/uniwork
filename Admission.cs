@@ -11,25 +11,21 @@ class Admission
         
         Console.WriteLine("Your age is " + ageInt);
         
-        if (ageInt<=65)
+        if (ageInt>=18)
         {
-            if (ageInt>=18)
+            Console.WriteLine("You may come to uni!");
+            if (ageInt>=25)
             {
-                
-                Console.WriteLine("You may come to uni!");
-                if (ageInt>=25)
+                Console.WriteLine("You are a mature student!");
+                if (ageInt>=60)
                 {
-                    Console.WriteLine("You are a mature student!");
+                    Console.WriteLine("You won't get money though");
                 }
-            }
-            else
-            {
-                Console.WriteLine("You're too young to come to uni!");
             }
         }
         else
         {
-            Console.WriteLine("You're too old to come to uni!");
+                Console.WriteLine("You're too young to come to uni!");
         }
     }
 }
