@@ -9,6 +9,7 @@ class Maths
 	    Console.Write("You entered ");
 	    Console.Write(test);
 	    Console.Write(" what number do you want to say?");
+	    Console.WriteLine("Fuck this shit " + test + " sucks dick.");
 	    test = Console.ReadLine();
 	    Console.WriteLine(int.Parse(test));
 	    Console.WriteLine("4 * 5 = " + 4*5);
