@@ -23,9 +23,13 @@ class Admission
                 }
             }
         }
+        else if(ageInt>=16)
+        {
+            Console.WriteLine("You could come to an access course");
+        }
         else
         {
-                Console.WriteLine("You're too young to come to uni!");
+            Console.WriteLine("You're too young to come to uni!");
         }
     }
 }
