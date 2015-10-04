@@ -4,7 +4,7 @@ class Schedule
 {
     static void Main()
     {
-        Console.WriteLine("What day is it (as a number)?")
+        Console.WriteLine("What day is it (as a number)?");
         string day = Console.ReadLine();
         
         int daynum = int.Parse(day);
