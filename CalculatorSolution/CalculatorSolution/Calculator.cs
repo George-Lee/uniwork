@@ -48,7 +48,7 @@ namespace CalculatorSolution
             //Assume no failure until we find one!
             errorFound = false;
             calculationComplete = false;
-
+            Console.Write(operation);
             //Run any pending calculations
             if (awaitingOperation)
             {
@@ -164,6 +164,11 @@ namespace CalculatorSolution
                     accumulator = result;
                     break;
                 case '/':
+                    if(operand == 0)
+                    {
+                        errorFound = true;
+                        break;
+                    }
                     result = Divide(input, operand);
                     accumulator = result;
                     break;
@@ -172,6 +177,11 @@ namespace CalculatorSolution
                     accumulator = result;
                     break;
                 case '%':
+                    if (operand == 0)
+                    {
+                        errorFound = true;
+                        break;
+                    }
                     result = Modulus(input, operand);
                     accumulator = result;
                     break;
@@ -182,6 +192,7 @@ namespace CalculatorSolution
                 case '\\':
                     result = Root(input);
                     accumulator = result;
+                    Console.Write(result + "|" + accumulator);
                     break;
                 default: break;
             }

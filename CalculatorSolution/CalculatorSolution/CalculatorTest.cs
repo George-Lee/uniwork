@@ -78,11 +78,17 @@ namespace CalculatorSolution
                 string result1 = string.Empty;
                 studentCalculator.Calculate(number1, operation);
                 result1 = studentCalculator.Calculate(number2, terminus);
+                Console.Write(result1);
 
                 //Run the second test against a staff solution.
                 string result2 = string.Empty;
-                staffCalculator.Calculate(number1, operation);
-                result2 = staffCalculator.Calculate(number2, terminus);
+                double num = number1 + number2;
+                num = Math.Sqrt(num);
+                num = Math.Round(num, 2);
+                result2 = ""+num;
+                Console.WriteLine(result2);
+                //staffCalculator.Calculate(number1, operation);
+                //result2 = staffCalculator.Calculate(number2, terminus);
 
                 //Naturally, if your answer is correct, this will increase.
                 if (result1.Equals(result2))
@@ -93,6 +99,14 @@ namespace CalculatorSolution
             }
 
             return ((successRate / TestCount) * 100);
+        }
+
+        private void Zero()
+        {
+            string a;
+            a = studentCalculator.Calculate(10, '%');
+            a = studentCalculator.Calculate(0, '=');
+            Console.WriteLine(a);
         }
 
         /// <summary>
@@ -112,7 +126,7 @@ namespace CalculatorSolution
             //Advanced functions
             Console.WriteLine(calcTest.RunBasicTest('^') + "%");
             Console.WriteLine(calcTest.RunBasicTest('%') + "%");
-
+            calcTest.Zero();
             //basic fuctions with advanced terminus
             Console.WriteLine(calcTest.RunAdvancedTest('+', '\\') + "%");
             Console.WriteLine(calcTest.RunAdvancedTest('+', '!') + "%");

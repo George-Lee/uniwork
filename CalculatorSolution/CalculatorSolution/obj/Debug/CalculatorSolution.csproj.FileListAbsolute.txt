@@ -21,3 +21,11 @@ D:\uniwork\CalculatorSolution\CalculatorSolution\bin\Debug\CalculatorSolution.pd
 D:\uniwork\CalculatorSolution\CalculatorSolution\bin\Debug\CalculatorFinal.dll
 D:\uniwork\CalculatorSolution\CalculatorSolution\bin\Debug\CalculatorFinal.pdb
 D:\uniwork\CalculatorSolution\CalculatorSolution\obj\Debug\CalculatorSolution.csprojResolveAssemblyReference.cache
+T:\Documents\uniwork\CalculatorSolution\CalculatorSolution\bin\Debug\CalculatorSolution.exe.config
+T:\Documents\uniwork\CalculatorSolution\CalculatorSolution\obj\Debug\CalculatorSolution.exe
+T:\Documents\uniwork\CalculatorSolution\CalculatorSolution\obj\Debug\CalculatorSolution.pdb
+T:\Documents\uniwork\CalculatorSolution\CalculatorSolution\bin\Debug\CalculatorSolution.exe
+T:\Documents\uniwork\CalculatorSolution\CalculatorSolution\bin\Debug\CalculatorSolution.pdb
+T:\Documents\uniwork\CalculatorSolution\CalculatorSolution\bin\Debug\CalculatorFinal.dll
+T:\Documents\uniwork\CalculatorSolution\CalculatorSolution\bin\Debug\CalculatorFinal.pdb
+T:\Documents\uniwork\CalculatorSolution\CalculatorSolution\obj\Debug\CalculatorSolution.csprojResolveAssemblyReference.cache
