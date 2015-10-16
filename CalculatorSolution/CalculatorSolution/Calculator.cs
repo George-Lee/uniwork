@@ -126,12 +126,28 @@ namespace CalculatorSolution
             switch (operation)
             {
                 case '!':
-                    result = Factorial((int)accumulator);
-                    accumulator = result;
+                    if (accumulator <= 0)
+                    {
+                        errorFound = true;
+                        break;
+                    }
+                    else
+                    {
+                        result = Factorial((int)accumulator);
+                        accumulator = result;
+                    }
                     break;
                 case '\\':
-                    result = Root(accumulator);
-                    accumulator = result;
+                    if (accumulator <= 0)
+                    {
+                        errorFound = true;
+                        break;
+                    }
+                    else
+                    {
+                        result = Root(accumulator);
+                        accumulator = result;
+                    }   
                     break;
                 case '=':
                 default: break;
@@ -290,7 +306,7 @@ namespace CalculatorSolution
         private int Factorial(int number1)
         {
             int result = 1;
-
+            Console.Write(number1);
             if (number1 < 13)
             {
                 //number is small enough for us to use recursion, and be slightly quicker.
@@ -303,6 +319,7 @@ namespace CalculatorSolution
                     result = result * number;
                 }
             }
+            Console.Write('1');
             return result;
 
             // No need to round this as we're dealing with integers
