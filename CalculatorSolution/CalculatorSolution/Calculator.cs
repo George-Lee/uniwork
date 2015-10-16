@@ -48,7 +48,6 @@ namespace CalculatorSolution
             //Assume no failure until we find one!
             errorFound = false;
             calculationComplete = false;
-            Console.Write(operation);
             //Run any pending calculations
             if (awaitingOperation)
             {
@@ -99,6 +98,7 @@ namespace CalculatorSolution
         private void ResetCalculator()
         {
             //Reset all of the variables that you need for this calculator.
+            previousOperand = 0;
             errorFound = false;
             calculationComplete = false;
         }
@@ -121,15 +121,17 @@ namespace CalculatorSolution
 
         private void RunTerminalOperation(char operation)
         {
-            double input = SelectInput();
+            double result = 0;
 
             switch (operation)
             {
                 case '!':
-                    RunOperation(1, '!');
+                    result = Factorial((int)accumulator);
+                    accumulator = result;
                     break;
                 case '\\':
-                    RunOperation(1, '\\');
+                    result = Root(accumulator);
+                    accumulator = result;
                     break;
                 case '=':
                 default: break;
@@ -164,14 +166,17 @@ namespace CalculatorSolution
                     accumulator = result;
                     break;
                 case '/':
-                    if(operand == 0)
+                    if (operand == 0)
                     {
                         errorFound = true;
                         break;
                     }
-                    result = Divide(input, operand);
-                    accumulator = result;
-                    break;
+                    else
+                    {
+                        result = Divide(input, operand);
+                        accumulator = result;
+                        break;
+                    }
                 case '^':
                     result = Power(input, operand);
                     accumulator = result;
@@ -182,18 +187,12 @@ namespace CalculatorSolution
                         errorFound = true;
                         break;
                     }
-                    result = Modulus(input, operand);
-                    accumulator = result;
-                    break;
-                case '!':
-                    result = Factorial((int)input);
-                    accumulator = result;
-                    break;
-                case '\\':
-                    result = Root(input);
-                    accumulator = result;
-                    Console.Write(result + "|" + accumulator);
-                    break;
+                    else
+                    {
+                        result = Modulus(input, operand);
+                        accumulator = result;
+                        break;
+                    } 
                 default: break;
             }
         }
@@ -270,6 +269,20 @@ namespace CalculatorSolution
         // Advanced functions
 
         /// <summary>
+        /// Calculates the factorial of a number through recursion.
+        /// </summary>
+        /// <param name="number1">The number to factor in the operation.</param>
+        /// <returns>The result of the factorial.</returns>
+        private int RecursiveFactiorial(int number1)
+        {
+            if (number1 == 0)
+            {
+                return 1;
+            }
+            return number1 * Factorial(number1 - 1);
+        }
+
+        /// <summary>
         /// Calculates the factorial of a number.
         /// </summary>
         /// <param name="number1">The number to factor in the operation.</param>
@@ -277,23 +290,22 @@ namespace CalculatorSolution
         private int Factorial(int number1)
         {
             int result = 1;
-            /*for (int number = number1; number > 0; number--)
-            {
-                Console.WriteLine(number1);
-                Console.WriteLine(number + " | " + result);
-                result = result * number;
-                Console.WriteLine(number + " | " + result);
-            }*/
 
-            for (int number = 1; number<= number1; number++)
+            if (number1 < 13)
             {
-                //Console.WriteLine(number1);
-                //Console.WriteLine(number + " | " + result);
-                result = result * number;
-                //Console.WriteLine(number + " | " + result);
+                //number is small enough for us to use recursion, and be slightly quicker.
+                result = RecursiveFactiorial(number1);
             }
-            // No need to round this as we're dealing with integers
+            else
+            {
+                for (int number = 1; number <= number1; number++)
+                {
+                    result = result * number;
+                }
+            }
             return result;
+
+            // No need to round this as we're dealing with integers
         }
 
         /// <summary>
