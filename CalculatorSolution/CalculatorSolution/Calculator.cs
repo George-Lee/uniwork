@@ -126,17 +126,18 @@ namespace CalculatorSolution
             switch (operation)
             {
                 case '!':
-                    int accum = Convert.ToInt32(accumulator);
-                    if (accum > 0)
+                    int accum;
+                    if(int.TryParse(""+accumulator, out accum) && accum > 0)
                     {
-                        Console.WriteLine("Not less than 0 {0} | {1}", accumulator, accum);
                         result = Factorial(accum);
                         accumulator = result;
+                        Console.WriteLine("Error not found! {0}", result);
                     }
                     else
                     {
-                        Console.WriteLine("Less than 0 {0}", accum);
-                        errorFound = true;
+                        Console.WriteLine("Error Found, returning a 1 as Tommy's does that.");
+                        accumulator = 1;
+                        //no idea why it works like this, but Tommy's example code gives a 1 in this circumstance.
                         break;
                     }
                     break;
@@ -309,20 +310,10 @@ namespace CalculatorSolution
         private int Factorial(int number1)
         {
             int result = 1;
-            Console.Write(number1);
-            if (number1 < 13)
+            for (int number = 1; number <= number1; number++)
             {
-                //number is small enough for us to use recursion, and be slightly quicker.
-                result = RecursiveFactiorial(number1);
+                result = result * number;
             }
-            else
-            {
-                for (int number = 1; number <= number1; number++)
-                {
-                    result = result * number;
-                }
-            }
-            Console.Write('|');
             return result;
 
             // No need to round this as we're dealing with integers

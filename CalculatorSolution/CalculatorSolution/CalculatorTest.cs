@@ -9,7 +9,7 @@ namespace CalculatorSolution
 {
     class SimpleCalculatorTester
     {
-        const int TestCount = 1;
+        const int TestCount = 10;
         Random random;
 
         CalculatorFinal staffCalculator;
@@ -78,12 +78,12 @@ namespace CalculatorSolution
                 string result1 = string.Empty;
                 studentCalculator.Calculate(number1, operation);
                 result1 = studentCalculator.Calculate(number2, terminus);
-
+                Console.Write(result1);
                 //Run the second test against a staff solution.
                 string result2 = string.Empty;
                 staffCalculator.Calculate(number1, operation);
                 result2 = staffCalculator.Calculate(number2, terminus);
-
+                Console.WriteLine(" | {0}", result2);
                 //Naturally, if your answer is correct, this will increase.
                 if (result1.Equals(result2))
                 {
@@ -93,14 +93,6 @@ namespace CalculatorSolution
             }
 
             return ((successRate / TestCount) * 100);
-        }
-
-        private void Zero()
-        {
-            string a;
-            a = studentCalculator.Calculate(10, '/');
-            a = studentCalculator.Calculate(0, '=');
-            Console.WriteLine(a);
         }
 
         /// <summary>
@@ -120,7 +112,6 @@ namespace CalculatorSolution
             //Advanced functions
             Console.WriteLine("^ " + calcTest.RunBasicTest('^') + "%");
             Console.WriteLine("% " + calcTest.RunBasicTest('%') + "%");
-            calcTest.Zero();
             //basic fuctions with advanced terminus
             Console.WriteLine("\\ " + calcTest.RunAdvancedTest('+', '\\') + "%");
             Console.WriteLine("! " + calcTest.RunAdvancedTest('+', '!') + "%");
