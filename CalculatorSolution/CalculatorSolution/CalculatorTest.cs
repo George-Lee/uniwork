@@ -9,7 +9,7 @@ namespace CalculatorSolution
 {
     class SimpleCalculatorTester
     {
-        const int TestCount = 1000;
+        const int TestCount = 1;
         Random random;
 
         CalculatorFinal staffCalculator;

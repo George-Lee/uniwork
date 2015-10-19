@@ -126,15 +126,18 @@ namespace CalculatorSolution
             switch (operation)
             {
                 case '!':
-                    if (accumulator <= 0)
+                    int accum = Convert.ToInt32(accumulator);
+                    if (accum > 0)
                     {
-                        errorFound = true;
-                        break;
+                        Console.WriteLine("Not less than 0 {0} | {1}", accumulator, accum);
+                        result = Factorial(accum);
+                        accumulator = result;
                     }
                     else
                     {
-                        result = Factorial((int)accumulator);
-                        accumulator = result;
+                        Console.WriteLine("Less than 0 {0}", accum);
+                        errorFound = true;
+                        break;
                     }
                     break;
                 case '\\':
@@ -319,7 +322,7 @@ namespace CalculatorSolution
                     result = result * number;
                 }
             }
-            Console.Write('1');
+            Console.Write('|');
             return result;
 
             // No need to round this as we're dealing with integers
