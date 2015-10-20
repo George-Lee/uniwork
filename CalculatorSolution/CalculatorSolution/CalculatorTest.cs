@@ -9,7 +9,7 @@ namespace CalculatorSolution
 {
     class SimpleCalculatorTester
     {
-        const int TestCount = 10;
+        const int TestCount = 1;
         Random random;
 
         CalculatorFinal staffCalculator;
@@ -78,12 +78,14 @@ namespace CalculatorSolution
                 string result1 = string.Empty;
                 studentCalculator.Calculate(number1, operation);
                 result1 = studentCalculator.Calculate(number2, terminus);
-                Console.Write(result1);
+
                 //Run the second test against a staff solution.
                 string result2 = string.Empty;
                 staffCalculator.Calculate(number1, operation);
                 result2 = staffCalculator.Calculate(number2, terminus);
-                Console.WriteLine(" | {0}", result2);
+
+                Console.WriteLine("{0} | {1}", number1, number2);
+                Console.WriteLine("{0} | {1}", result1, result2);
                 //Naturally, if your answer is correct, this will increase.
                 if (result1.Equals(result2))
                 {

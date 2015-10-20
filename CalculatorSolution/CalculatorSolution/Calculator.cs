@@ -126,20 +126,9 @@ namespace CalculatorSolution
             switch (operation)
             {
                 case '!':
-                    int accum;
-                    if(int.TryParse(""+accumulator, out accum) && accum > 0)
-                    {
-                        result = Factorial(accum);
-                        accumulator = result;
-                        Console.WriteLine("Error not found! {0}", result);
-                    }
-                    else
-                    {
-                        Console.WriteLine("Error Found, returning a 1 as Tommy's does that.");
-                        accumulator = 1;
-                        //no idea why it works like this, but Tommy's example code gives a 1 in this circumstance.
-                        break;
-                    }
+                    Console.WriteLine(accumulator);
+                    result = Factorial(accumulator);
+                    accumulator = result;
                     break;
                 case '\\':
                     if (accumulator <= 0)
@@ -289,30 +278,22 @@ namespace CalculatorSolution
         // Advanced functions
 
         /// <summary>
-        /// Calculates the factorial of a number through recursion.
-        /// </summary>
-        /// <param name="number1">The number to factor in the operation.</param>
-        /// <returns>The result of the factorial.</returns>
-        private int RecursiveFactiorial(int number1)
-        {
-            if (number1 == 0)
-            {
-                return 1;
-            }
-            return number1 * Factorial(number1 - 1);
-        }
-
-        /// <summary>
         /// Calculates the factorial of a number.
         /// </summary>
         /// <param name="number1">The number to factor in the operation.</param>
         /// <returns>The result of the factorial.</returns>
-        private int Factorial(int number1)
+        private double Factorial(double number1)
         {
-            int result = 1;
+            double result = 1;
             for (int number = 1; number <= number1; number++)
             {
+                if(result >= double.MaxValue)
+                {
+                    errorFound = true;
+                    return 1;
+                }
                 result = result * number;
+                Console.WriteLine("{0} | {1}", number, result);
             }
             return result;
 
@@ -355,6 +336,22 @@ namespace CalculatorSolution
             double result = number1 % number2;
             result = Math.Round(result, 2);
             return result;
+        }
+
+        /// <summary>
+        /// Attempts to return an integer value within boundaries for factorial
+        /// </summary>
+        /// <param name="number1"> 
+        /// Number to be converted to int.
+        /// </param>
+        /// <returns>
+        /// Integer value parsed from double.
+        /// </returns>
+        private int ToFactInt(double number1)
+        {
+            int integer;
+            int.TryParse(""+number1,out integer);
+            return integer;
         }
     }
 }
