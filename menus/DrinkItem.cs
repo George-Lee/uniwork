@@ -1,33 +1,37 @@
 using System;
 
-namespace FoodItem
+namespace DrinkItem
 {
-    class FoodItem 
+    class DrinkItem
     {
-        string name;
+        strink name;
+        bool alcoholic;
 
-        public FoodItem(string itemName)
+        public DrinkItem(string itemName)
         {
             name = itemName;
         }
-        
+
         public string description
         {
             get {return description;}
             set {description = value;}
         }
 
-        public int numberServed
+        public double alcoholicVolume
         {
-            get {return numberServed;}
+            get {return alcoholicVolume;}
             set
             {
-                if(numberServed > 0 && numberServed <=4)
+                if(double.IsNan(value) || value < 0)
                 {
+                    alcoholicVolume = 0
+                    alcoholic = false;
                 }
                 else
                 {
-                    numberServed = 0;
+                    alcoholicVolume = value;
+                    alcoholic = true;
                 }
             }
         }
@@ -46,6 +50,11 @@ namespace FoodItem
                     cost = value;
                 }
             }
+        }
+
+        public bool IsAlcoholic()
+        {
+            return alchoholic;
         }
     }
 }
