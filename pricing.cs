@@ -33,5 +33,5 @@ class pricing
         {
 			Console.WriteLine("You're getting no discount. That means it'll cost you £" + basePrice*orderNum);
         }
-	}
+    }
 }
