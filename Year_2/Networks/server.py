@@ -3,8 +3,9 @@ import socket, random
 class Guess:
     def __init__(self):
         self.number = self.new_number()
-        self.close = 20
+        self.close = 10
         self.guesses = 0
+        print(self.number)
 
     def new_number(self):
         return random.randint(1, 100)
@@ -14,7 +15,7 @@ class Guess:
         self.guesses += 1
         if guess == self.number:
             return b"Correct\r\n"
-        elif (self.number - guess <= self.close or guess - self.number <= self.close):
+        elif (guess < self.number and self.number - guess <= self.close) or (guess > self.number and guess - self.number <= self.close):
             return b"Close\r\n"
         else:
             return b"Far\r\n"
@@ -71,6 +72,7 @@ class Server:
                 self.send(conn, answer)
                 if answer == b"Correct\r\n":
                     self.close(conn)
+                    break
                 data = b''
 
 
