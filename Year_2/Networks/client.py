@@ -35,61 +35,64 @@ class Server:
         self.sock.connect(('.'.join(str(part) for part in ip_addr), self.port))
         return True
 
-    #move to server and delete
-    def close(self):
-        self.sock.shutdown(socket.SHUT_RDWR)
-        self.sock.close()
-        return True
-
     def send(self, msg):
-        self.sock.sendall(msg)
+        try:
+            self.sock.sendall(msg)
+        except ConnectionResetError:
+            print("Server closed the connection")
+            return False
         return True
 
     def receive(self):
         msg = b''
         while not msg.endswith(b'\r\n'):
-            msg += self.sock.recv(1024)
-        print(msg)
+            try:
+                msg += self.sock.recv(1024)
+            except ConnectionAbortedError:
+                print("Server closed the connection")
+                return False
         return msg.decode("utf-8")
 
     def communicate(self, msg, expected):
-        self.send(msg)
-        if self.receive().startswith(expected):
-            return True
+        if self.send(msg):
+            msg = self.receive()
+            if msg:
+                if msg.startswith(expected):
+                    return True
+            else:
+                return False
+        else:
+            return False
 
-    def make_guess(self, number):
-        msg = "My Guess is: {0}\r\n".format(number)
-        msg = msg.encode('utf-8')
-        self.send(msg)
-        response = self.receive()
-        if response == "Far":
+    def handshake(self):
+        if server.communicate(b"Hello\r\n", "Greetings"):
+            if server.communicate(b"Game\r\n", "Ready"):
+                return True
+
+def make_guess(server):
+    guess = input("What is your guess? ")
+    try:
+        guess = int(guess)
+    except ValueError:
+        print("Please enter a correct number")
+        make_guess(server)
+    server.send("My Guess is: {0}\r\n".format(guess).encode('utf-8'))
+    msg = server.receive()
+    if msg:
+        if msg.startswith("Far"):
             print("far")
-        elif response == "Close":
+        elif msg.startswith("Close"):
             print("close")
-        elif response == "Correct":
+        elif msg.startswith("Correct"):
             print("correct")
-
-
-def hello(server):
-    server.send(b"Hello\r\n")
-    msg = server.receive()
-    if msg.startswith("Greetings"):
-        return True
-
-def game(server):
-    server.send(b"Game\r\n")
-    msg = server.receive()
-    if msg.startswith("Ready"):
-        return True
+            return True
+        make_guess(server)
+    else:
+        return False
 
 if __name__ == '__main__':
     ip_addr = get_ip()
     server = Server()
     server.connect(ip_addr)
-    if server.communicate(b"Hello\r\n", "Greetings"):
-        print("Greetings")
-        if server.communicate(b"Game\r\n", "Ready"):
-            print("Game ready")
-            for i in range (0, 101):
-                server.make_guess(i)
-    server.close()
+    if server.handshake():
+        make_guess(server)

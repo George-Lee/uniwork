@@ -3,18 +3,16 @@ import socket, random
 class Guess:
     def __init__(self):
         self.number = self.new_number()
-        self.close = 20
-        self.guesses = 0
+        self.close = 5
+        print(self.number)
 
     def new_number(self):
-        return random.randint(1, 100)
+        return random.randint(1, 30)
 
-    #move to client and delete guess counter
     def make_guess(self, guess):
-        self.guesses += 1
         if guess == self.number:
             return b"Correct\r\n"
-        elif (self.number - guess <= self.close or guess - self.number <= self.close):
+        elif (guess < self.number and self.number - guess <= self.close) or (guess > self.number and guess - self.number <= self.close):
             return b"Close\r\n"
         else:
             return b"Far\r\n"
@@ -22,14 +20,16 @@ class Guess:
 
 class Server:
     def __init__(self, sock=None):
-        if sock is None:
-            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        else:
-            self.sock = sock
         self.port = 4000
         self.aport = 4001
         self.games = {}
         self.connected = []
+        if sock is None:
+            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.sock.bind(('127.0.0.1', self.port))
+            self.sock.listen(5)
+        else:
+            self.sock = sock
 
     def close(self, conn):
         self.connected.remove(conn.getpeername())
@@ -42,8 +42,6 @@ class Server:
         return True
 
     def listen(self):
-        self.sock.bind(('', self.port))
-        self.sock.listen(5)
         conn, addr = self.sock.accept()
         while conn:
             if addr not in self.connected:
@@ -71,9 +69,12 @@ class Server:
                 self.send(conn, answer)
                 if answer == b"Correct\r\n":
                     self.close(conn)
+                    break
                 data = b''
+
 
 
 if __name__ == '__main__':
     server = Server()
-    server.listen()
+    while True:
+        server.listen()
