@@ -76,4 +76,11 @@ if __name__ == '__main__':
     server.connect(ip_addr)
     if server.handshake():
         server.send(b'Who\r\n')
-        print(server.receive())
+        message = server.receive()
+        print("The players currently playing are:")
+        try:
+            splitm = message.split(' ')
+            for i, k in zip(splitm[0::2], splitm[1::2]):
+                print("{}:{}".format(i, k))
+        except:
+            print(message)
