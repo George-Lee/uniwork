@@ -4,7 +4,6 @@ class Guess:
     def __init__(self):
         self.number = self.new_number()
         self.close = 5
-        print(self.number)
 
     def new_number(self):
         return random.randint(1, 30)
@@ -52,12 +51,10 @@ class Server:
             msg = data.decode("utf-8")
             if msg == "Hello\r\n":
                 self.send(conn, b'Greetings\r\n')
-                print("Greetings")
                 data = b''
             elif msg == "Game\r\n":
                 self.games[conn] = Guess()
                 self.send(conn, b'Ready\r\n')
-                print("Ready")
                 data = b''
             elif msg.startswith("My Guess is: "):
                 try:
@@ -65,7 +62,6 @@ class Server:
                 except ValueError:
                     guess = 999
                 answer = self.games[conn].make_guess(guess)
-                print("Guess")
                 self.send(conn, answer)
                 if answer == b"Correct\r\n":
                     self.close(conn)
