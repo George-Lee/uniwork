@@ -24,7 +24,6 @@ def create_srv_socket(address):
     listener.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     listener.bind(address)
     listener.listen(64)
-    print("Listening at {}".format(address))
     return listener
 
 def all_events_forever(poll_object):
@@ -53,12 +52,6 @@ def serve(listener, alistener):
             address = addresses.pop(sock)
             rb = bytes_received.pop(sock, b'')
             sb = bytes_to_send.pop(sock, b'')
-            if rb:
-                print("Client {} sent {} but then closed".format(address, rb))
-            elif sb:
-                print("Client {} closed before we send {}".format(address, sb))
-            else:
-                print("Client {} closed socket normally".format(address))
             if sock in admins:
                 admins.remove(sock)
             if sock in games:
@@ -70,7 +63,6 @@ def serve(listener, alistener):
 
         elif sock is listener or sock is alistener:
             sock, address = sock.accept()
-            print("Accepted connection from {}".format(address))
             sock.setblocking(False) #socket.timeout if mistake
             sockets[sock.fileno()] = sock
             addresses[sock] = address
@@ -86,12 +78,10 @@ def serve(listener, alistener):
             data = bytes_received.pop(sock, b'') + more_data
             if data.endswith(b'\r\n'):
                 if data == b'Hello\r\n':
-                    print(sock.getsockname())
                     if sock.getsockname()[1] == 4000:
                         bytes_to_send[sock] = b'Greetings\r\n'
                     elif sock.getsockname()[1] == 4001:
                         bytes_to_send[sock] = b'Admin-Greetings\r\n'
-                        print("Sending admin greetings")
                         admins.append(sock)
                 elif data == b'Game\r\n':
                     games[sock] = Guess()
@@ -102,22 +92,17 @@ def serve(listener, alistener):
                     except ValueError:
                         guess = 999
                     answer = games[sock].make_guess(guess)
-                    print("Guess {}".format(answer))
                     bytes_to_send[sock] = answer
                 elif data == b'Who\r\n' and sock in admins:
                     bytes_to_send[sock] = b''
-                    print(addresses)
                     for address in addresses:
-                        print(addresses[address])
                         message = ''
                         for i in addresses[address]:
                             message += str(i)
                             message += " "
                         bytes_to_send[sock] += message.encode()
                     bytes_to_send[sock] += b'\r\n'
-                    print(bytes_to_send[sock])
                 else:
-                    print("wtf {}".format(data))
                     bytes_to_send[sock] = b'WTF?\r\n'
                 poll_object.modify(sock, select.POLLOUT)
             else:
