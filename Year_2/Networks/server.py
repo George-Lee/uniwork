@@ -33,6 +33,7 @@ def all_events_forever(poll_object):
 
 def serve(listener, alistener):
     sockets = {listener.fileno(): listener, alistener.fileno(): alistener}
+    user_addresses = {}
     addresses = {}
     bytes_received = {}
     bytes_to_send = {}
@@ -55,6 +56,7 @@ def serve(listener, alistener):
             if sock in admins:
                 admins.remove(sock)
             if sock in games:
+                del user_addresses[sock]
                 del games[sock]
             poll_object.unregister(fd)
             del sockets[fd]
@@ -66,6 +68,8 @@ def serve(listener, alistener):
             sock.setblocking(False) #socket.timeout if mistake
             sockets[sock.fileno()] = sock
             addresses[sock] = address
+            if sock.getsockname()[1] == 4000:
+                user_addresses[sock] = address
             poll_object.register(sock, select.POLLIN)
 
         # Incoming data, keep receiving until we see the suffix.
@@ -95,9 +99,9 @@ def serve(listener, alistener):
                     bytes_to_send[sock] = answer
                 elif data == b'Who\r\n' and sock in admins:
                     bytes_to_send[sock] = b''
-                    for address in addresses:
+                    for address in user_addresses:
                         message = ''
-                        for i in addresses[address]:
+                        for i in user_addresses[address]:
                             message += str(i)
                             message += " "
                         bytes_to_send[sock] += message.encode()
@@ -115,8 +119,8 @@ def serve(listener, alistener):
             n = sock.send(data)
             if n<len(data):
                 bytes_to_send[sock] = data[n:]
-            elif data == b"Correct\r\n":
-                sock.close()
+                if data == b"Correct\r\n":
+                    sock.close()
             else:
                 poll_object.modify(sock, select.POLLIN)
 

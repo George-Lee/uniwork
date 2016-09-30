@@ -32,8 +32,12 @@ class Server:
         self.port = 4000
 
     def connect(self, ip_addr):
-        self.sock.connect(('.'.join(str(part) for part in ip_addr), self.port))
-        return True
+        try:
+            self.sock.connect(('.'.join(str(part) for part in ip_addr), self.port))
+        except OSError:
+            return False
+        finally:
+            return True
 
     def send(self, msg):
         try:

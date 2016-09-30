@@ -67,7 +67,6 @@ class Server:
     def handshake(self):
         print("start")
         if server.communicate(b"Hello\r\n", "Admin-Greetings"):
-            print("done")
             return True
 
 if __name__ == '__main__':
@@ -84,3 +83,4 @@ if __name__ == '__main__':
                 print("{}:{}".format(i, k))
         except:
             print(message)
+
