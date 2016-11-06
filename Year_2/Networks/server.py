@@ -68,13 +68,17 @@ class Server(asyncio.Protocol):
     def connection_lost(self, exc):
         if connected[self.address]:
             del connected[self.address]
-        if user_connected[self.address]:
-            del user_connected[self.address]
+        if self.address in user_connected.keys():
+            if user_connected[self.address]:
+                del user_connected[self.address]
         if exc:
+            pass
             #error
         elif self.data:
+            pass
             #client sent some data but closed
         else:
+            pass
             #print('Client {} closed socket".format(self.address))
 
 if __name__ == '__main__':
