@@ -53,12 +53,9 @@ class Server(asyncio.Protocol):
             elif connected[self.address] == "Admin" and self.data == b"Who\r\n":
                 message = ''
                 for user in user_connected.keys():
-                    for i in user:
-                        message += str(i)
-                        message += " "
-                message = message.encode()
-                message += b"\r\n"
-                self.transport.write(message)
+                    self.transport.write("{} {}\r\n".format(user[0], user[1]).encode())
+                self.transport.abort()
+
 
             else:
                 pass

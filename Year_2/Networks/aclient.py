@@ -27,6 +27,7 @@ class Server:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         else:
             self.sock = sock
+        self.sock.settimeout(0.5)
         self.port = 4001
     def connect(self, ip_addr):
         self.sock.connect(('.'.join(str(part) for part in ip_addr), self.port))
@@ -43,10 +44,12 @@ class Server:
         while not msg.endswith(b'\r\n'):
             try:
                 msg += self.sock.recv(1024)
+                return msg.decode()
             except ConnectionAbortedError:
                 print("Server closed the connection")
                 return False
-        return msg.decode("utf-8")
+            except Exception as e:
+                print(e)
     def communicate(self, msg, expected):
         if self.send(msg):
             msg = self.receive()
@@ -66,11 +69,10 @@ if __name__ == '__main__':
     server.connect(ip_addr)
     if server.handshake():
         server.send(b'Who\r\n')
-        message = server.receive()
         print("The players currently playing are:")
-        try:
-            splitm = message.split(' ')
-            for i, k in zip(splitm[0::2], splitm[1::2]):
-                print("{}:{}".format(i, k))
-        except:
-            print(message)
+        while True:
+            message = server.receive()
+            if message:
+                print(message[:-1])
+            else:
+                break
