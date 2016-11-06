@@ -1,130 +1,92 @@
-#!/usr/bin/env python3
+import asyncio, random
 
-import socket, select, random
+connected, user_connected = {}, {}
 
-class Guess:
+class Game:
     def __init__(self):
         self.number = self.new_number()
-        self.close = 5
+        self.close = 3
 
     def new_number(self):
         return random.randint(1, 30)
 
     def make_guess(self, guess):
-        if guess == self.number:
+        distance = abs(self.number - guess)
+        if distance == 0:
             return b"Correct\r\n"
-        elif (guess < self.number and self.number - guess <= self.close) or (guess > self.number and guess - self.number <= self.close):
+        elif distance <= 3:
             return b"Close\r\n"
-        else:
+        elif distance > 3:
             return b"Far\r\n"
 
-def create_srv_socket(address):
-    """Build and return a listening server socket."""
-    listener = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    listener.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    listener.bind(address)
-    listener.listen(64)
-    return listener
+class Server(asyncio.Protocol):
 
-def all_events_forever(poll_object):
-    while True:
-        for fd, event in poll_object.poll():
-            yield fd, event
+    def connection_made(self, transport):
+        self.transport = transport
+        self.address = transport.get_extra_info('peername')
+        if transport.get_extra_info('sockname')[1] == 4000:
+            connected[self.address] = "Connected"
+            user_connected[self.address] = "User"
+        elif transport.get_extra_info('sockname')[1] == 4001:
+            connected[self.address] = "Admin"
+        self.data = b''
 
-def serve(listener, alistener):
-    sockets = {listener.fileno(): listener, alistener.fileno(): alistener}
-    user_addresses = {}
-    addresses = {}
-    bytes_received = {}
-    bytes_to_send = {}
-    games = {}
-    admins = []
+    def data_received(self, data):
+        self.data += data
+        if self.data.endswith(b'\r\n'):
+            if connected[self.address] == "Connected" and self.data == b"Hello\r\n":
+                #connected and hello
+                connected[self.address] = "Hello"
+                self.transport.write(b"Greetings\r\n")
+            elif connected[self.address] == "Hello" and self.data == b"Game\r\n":
+                connected[self.address] = Game()
+                self.transport.write(b"Ready\r\n")
+            elif isinstance(connected[self.address], object) and self.data.startswith(b"My Guess is: "):
+                try:
+                    guess = int(data.split()[-1])
+                    answer = connected[self.address].make_guess(guess)
+                    self.transport.write(answer)
+                except:
+                    self.transport.write(b"Far\r\n")
+            elif connected[self.address] == "Admin" and self.data == b"Hello\r\n":
+                self.transport.write(b"Admin-Greetings\r\n")
+            elif connected[self.address] == "Admin" and self.data == b"Who\r\n":
+                message = ''
+                for user in user_connected.keys():
+                    for i in user:
+                        message += str(i)
+                        message += " "
+                message = message.encode()
+                message += b"\r\n"
+                self.transport.write(message)
 
-    poll_object = select.poll()
-    poll_object.register(listener, select.POLLIN)
-    poll_object.register(alistener, select.POLLIN)
-
-    for fd, event in all_events_forever(poll_object):
-        sock = sockets[fd]
-
-        # Socket closed, remove from data structures
-
-        if event & (select.POLLHUP | select.POLLERR | select.POLLNVAL):
-            address = addresses.pop(sock)
-            rb = bytes_received.pop(sock, b'')
-            sb = bytes_to_send.pop(sock, b'')
-            if sock in admins:
-                admins.remove(sock)
-            if sock in games:
-                del user_addresses[sock]
-                del games[sock]
-            poll_object.unregister(fd)
-            del sockets[fd]
-
-        #new socket, add to data structures
-
-        elif sock is listener or sock is alistener:
-            sock, address = sock.accept()
-            sock.setblocking(False) #socket.timeout if mistake
-            sockets[sock.fileno()] = sock
-            addresses[sock] = address
-            if sock.getsockname()[1] == 4000:
-                user_addresses[sock] = address
-            poll_object.register(sock, select.POLLIN)
-
-        # Incoming data, keep receiving until we see the suffix.
-
-        elif event & select.POLLIN:
-            more_data = sock.recv(4096)
-            if not more_data: #EOF
-                sock.close()
-                continue
-            data = bytes_received.pop(sock, b'') + more_data
-            if data.endswith(b'\r\n'):
-                if data == b'Hello\r\n':
-                    if sock.getsockname()[1] == 4000:
-                        bytes_to_send[sock] = b'Greetings\r\n'
-                    elif sock.getsockname()[1] == 4001:
-                        bytes_to_send[sock] = b'Admin-Greetings\r\n'
-                        admins.append(sock)
-                elif data == b'Game\r\n':
-                    games[sock] = Guess()
-                    bytes_to_send[sock] = b'Ready\r\n'
-                elif data.startswith(b'My Guess is: '):
-                    try:
-                        guess = int(data.split()[-1])
-                    except ValueError:
-                        guess = 999
-                    answer = games[sock].make_guess(guess)
-                    bytes_to_send[sock] = answer
-                elif data == b'Who\r\n' and sock in admins:
-                    bytes_to_send[sock] = b''
-                    for address in user_addresses:
-                        message = ''
-                        for i in user_addresses[address]:
-                            message += str(i)
-                            message += " "
-                        bytes_to_send[sock] += message.encode()
-                    bytes_to_send[sock] += b'\r\n'
-                else:
-                    bytes_to_send[sock] = b'WTF?\r\n'
-                poll_object.modify(sock, select.POLLOUT)
             else:
-                bytes_received[sock] = data
+                pass
 
-        # Socket ready to send: keep sending until all bytes are delivered.
+            self.data = b''
 
-        elif event & select.POLLOUT:
-            data = bytes_to_send.pop(sock, b'')
-            n = sock.send(data)
-            if n<len(data):
-                bytes_to_send[sock] = data[n:]
-                if data == b"Correct\r\n":
-                    sock.close()
-            else:
-                poll_object.modify(sock, select.POLLIN)
+    def connection_lost(self, exc):
+        if connected[self.address]:
+            del connected[self.address]
+        if user_connected[self.address]:
+            del user_connected[self.address]
+        if exc:
+            #error
+        elif self.data:
+            #client sent some data but closed
+        else:
+            #print('Client {} closed socket".format(self.address))
 
 if __name__ == '__main__':
-    listener = create_srv_socket(('127.0.0.1', 4000))
-    alistener = create_srv_socket(('127.0.0.1', 4001))
-    serve(listener, alistener)
+    address = ('localhost', 4000)
+    loop = asyncio.get_event_loop()
+    coro = loop.create_server(Server, *address)
+    acoro = loop.create_server(Server, *('localhost', 4001))
+    server = loop.run_until_complete(coro)
+    aserver = loop.run_until_complete(acoro)
+    try:
+        loop.run_forever()
+    finally:
+        server.close()
+        aserver.close()
+        loop.close()

@@ -16,13 +16,11 @@ def check_ip(ip_addr):
         except ValueError:
             print("Please enter a correct IP address.")
             return False
-
 def get_ip():
     ip_addr = False
     while not ip_addr:
         ip_addr = check_ip(input("What is the server IP?: ").split('.'))
-    return ip_addr
-
+        return ip_addr
 class Server:
     def __init__(self, sock=None):
         if sock is None:
@@ -30,19 +28,16 @@ class Server:
         else:
             self.sock = sock
         self.port = 4001
-
     def connect(self, ip_addr):
         self.sock.connect(('.'.join(str(part) for part in ip_addr), self.port))
         return True
-
     def send(self, msg):
         try:
             self.sock.sendall(msg)
+            return True
         except ConnectionResetError:
             print("Server closed the connection")
             return False
-        return True
-
     def receive(self):
         msg = b''
         while not msg.endswith(b'\r\n'):
@@ -52,23 +47,19 @@ class Server:
                 print("Server closed the connection")
                 return False
         return msg.decode("utf-8")
-
     def communicate(self, msg, expected):
         if self.send(msg):
             msg = self.receive()
             if msg:
                 if msg.startswith(expected):
                     return True
+                else:
+                    return False
             else:
                 return False
-        else:
-            return False
-
     def handshake(self):
-        print("start")
         if server.communicate(b"Hello\r\n", "Admin-Greetings"):
             return True
-
 if __name__ == '__main__':
     ip_addr = get_ip()
     server = Server()
@@ -83,4 +74,3 @@ if __name__ == '__main__':
                 print("{}:{}".format(i, k))
         except:
             print(message)
-

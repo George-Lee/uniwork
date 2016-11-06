@@ -1,0 +1,48 @@
+Mr SMITH
+Mr  SmITh
+Mr Smith
+Mr Smith-Junior
+079-123456
+079 123456
+07912345678
+079123456
+Mobile:079123456
+01772123456
+(01332)123456
+01332123456
+(01332) 123456
+Phone:(01332) 123456
+00441332123456
+0044 1332 123456
++44 1772 123456
+44 772 123456
+a.student@unimail.derby.ac.uk
+A.student@derby.ac.uk
+A.Student@unimail.derby.ac.uk
+A.Student2@unimail.derby.ac.uk
+A2.Student@unimail.derby.ac.uk
+student@uclan.ac.uk
+a.new$.student@open.ac.uk
+a-student@open2.ac.uk
+a_Student1@imperial.ac.uk
+DE221GB
+DE22 1GB
+Postcode:DE22 1GB
+De22 1Gb
+0.0.0.0
+0.0.0.0.0
+1000.0.0.0
+0..0.0
+11:22:33:44:55
+111:22:33:44:55:66
+11:22:33:44:55:GH
+11:AB:CD:EF:22:33
+11:22:33:44:ff:aa
+30011111111111
+6011000000000000
+30476856432176
+341111111111111
+4444444444444
+5211223344556677
+
+

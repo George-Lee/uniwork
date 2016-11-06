@@ -32,12 +32,8 @@ class Server:
         self.port = 4000
 
     def connect(self, ip_addr):
-        try:
-            self.sock.connect(('.'.join(str(part) for part in ip_addr), self.port))
-        except OSError:
-            return False
-        finally:
-            return True
+        self.sock.connect(('.'.join(str(part) for part in ip_addr), self.port))
+        return True
 
     def send(self, msg):
         try:
@@ -60,6 +56,7 @@ class Server:
     def communicate(self, msg, expected):
         if self.send(msg):
             msg = self.receive()
+            print(msg)
             if msg:
                 if msg.startswith(expected):
                     return True
@@ -70,7 +67,9 @@ class Server:
 
     def handshake(self):
         if server.communicate(b"Hello\r\n", "Greetings"):
+            print("Got greetings")
             if server.communicate(b"Game\r\n", "Ready"):
+                print("Got ready")
                 return True
 
 def make_guess(server):
@@ -99,4 +98,5 @@ if __name__ == '__main__':
     server = Server()
     server.connect(ip_addr)
     if server.handshake():
+        print("Play game?")
         make_guess(server)
