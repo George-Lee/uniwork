@@ -12,7 +12,7 @@ def check_ip(ip_addr):
             if all(part >= 0 and part <= 256 for part in ip_addr):
                 return ip_addr
             else:
-                print("Please enter a corrent IP address.")
+                print("Please enter a correct IP address.")
         except ValueError:
             print("Please enter a correct IP address.")
             return False
